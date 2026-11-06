@@ -1,0 +1,95 @@
+\documentclass[10pt,a4paper]{article}
+\usepackage[margin=0.7in]{geometry}
+
+\usepackage[utf8]{inputenc}
+\usepackage{graphicx,booktabs,float,caption,parskip}
+\captionsetup{font=scriptsize,skip=2pt}
+\setlength{\parskip}{3pt}
+\renewcommand{\arraystretch}{1.05}
+
+\emergencystretch=3em
+\begin{document}
+\begin{center}
+{\Large\bfseries World Population Trend and CO$_2$ Emission}\\[14pt]
+{\large Mutangana Cyprien}\\[8pt]
+{\normalsize 6 November 2026}
+\end{center}
+
+\vspace{22pt}
+
+\begin{center}
+{\large\bfseries Abstract}
+\end{center}
+\vspace{6pt}
+\begin{center}
+\begin{minipage}{\textwidth}
+\small\setlength{\parindent}{0pt}\setlength{\parskip}{0pt}
+\raggedright
+The project examines population characteristics, projects national populations to 2030, describes population trends among the ten most populous countries, and assesses their relationship with CO$_2$ emissions. The population file contains 234 country/territory records and 17 variables, with no missing values or duplicate rows. The CO$_2$ file contains 215 records and annual per-capita emissions for 1990--2019, with missing observations. An exact country-name inner join produced 186 records, of which 168 had both 2022 population and 2019 CO$_2$ data. The Pearson correlation was approximately 0.008 ($p=0.916$), indicating no linear association in this matched sample. Summed country-level per-capita values ranked Asia first, Europe second and South America last. These sums are not continental total emissions; the indicator is per capita.
+\end{minipage}
+\end{center}
+
+\vspace{12pt}
+
+\section*{1. Introduction}
+Population growth can influence energy demand and environmental pressure, but population size does not by itself determine emissions per person. This analysis uses the supplied \emph{World Population Dataset} and \emph{CO$_2$ Emissions Around the World} dataset to describe population patterns and explore the association between population size and CO$_2$ emissions per capita.
+
+\section*{2. Methods and data description}
+The population dataset has 234 rows and 17 columns, including country, continent, population counts for 1970--2022, area, density, growth rate and world population percentage; it has zero missing cells and zero duplicate rows. The CO$_2$ dataset has 215 rows and 35 columns; annual values for 1990--2019 contain missing observations (24--30 per year). Its columns \texttt{2019} and \texttt{2019.1} are identical, so only \texttt{2019} was retained. Boxplots (Fig.~\ref{fig:box}) and the $1.5\times$IQR rule were used to flag outliers; plausible extreme country values (China, India, small city-states) were retained rather than deleted. For projection, the supplied growth rate is treated as an annual growth factor $g$, so $N_{2030}=P_{2022}\times g^{8}$, which is equivalent to the assignment's exponential formula $N_t=Pe^{rt}$ with $r=\ln(g)$. Country datasets were joined by exact country name, and complete 2019 observations were used in the correlation and regression.
+
+\begin{figure}[H]\centering
+\includegraphics[width=0.48\textwidth]{figures/boxplots.png}\hfill
+\includegraphics[width=0.48\textwidth]{figures/top10.png}
+\caption{Left: boxplots of the quantitative population variables (extremes are genuine values). Right: ten most populous countries, 2022.}\label{fig:box}
+\end{figure}
+
+\section*{3. Results and findings}
+\textbf{Population and projection.} The ten largest populations in 2022 were China (1,425,887,337), India (1,417,173,173), United States (338,289,857), Indonesia (275,501,339), Pakistan (235,824,862), Nigeria (218,541,212), Brazil (215,313,498), Bangladesh (171,186,372), Russia (144,713,314) and Mexico (127,504,125). Under the constant growth-factor projection, India reaches about 1.496 billion in 2030 and China about 1.426 billion. This is a simple extrapolation, not an official forecast.
+
+\begin{figure}[H]\centering
+\includegraphics[width=0.48\textwidth]{figures/poptrend.png}\hfill
+\includegraphics[width=0.48\textwidth]{figures/co2trend.png}
+\caption{Left: population of the top ten countries, 1990--2022. Right: CO$_2$ emissions per capita, 1990--2019 (metric tons). Russia is absent from the right panel because the CO$_2$ file names it ``Russian Federation'', so the exact-name filter did not match it.}\label{fig:trend}
+\end{figure}
+
+\textbf{Correlations among population variables.} Pearson correlations were: area--density $-0.063$; area--growth rate $-0.014$; area--world population share $0.453$; density--growth rate $-0.070$; density--world share $-0.028$; growth rate--world share $-0.021$. The largest positive association is between area and world population percentage ($r=0.453$); the others are weak (Fig.~\ref{fig:cor}).
+
+\textbf{Population and CO$_2$.} After exact-name merging, 186 countries/territories matched; 18 lacked a 2019 CO$_2$ value, leaving $n=168$. Pearson $r$ between 2022 population and 2019 CO$_2$ per capita was $0.0082$ ($p=0.916$; 95\% CI $-0.143$ to $0.159$), while Spearman $\rho$ was $-0.128$ ($p=0.099$). The linear model (slope $2.4\times10^{-10}$, $p=0.916$) had essentially no explanatory power ($R^2\approx0.00007$). The sample therefore provides no evidence of a meaningful linear association between population count and per-capita CO$_2$ emissions.
+
+\begin{figure}[H]\centering
+\includegraphics[width=0.48\textwidth]{figures/heatmap.png}\hfill
+\includegraphics[width=0.48\textwidth]{figures/scatter.png}
+\caption{Left: Pearson correlation heat map of population variables. Right: 2022 population versus 2019 CO$_2$ per capita with fitted line.}\label{fig:cor}
+\end{figure}
+
+\textbf{Continent comparison.} Because the indicator is per capita, the sums below are comparative sums of country-level values, not total continental emissions.
+
+\begin{table}[H]\centering\small
+\begin{tabular}{lrrr}
+\toprule
+Continent & Sum of country per-capita values & Mean per country & $n$\\
+\midrule
+Asia & 242.026 & 6.541 & 37\\
+Europe & 229.176 & 5.729 & 40\\
+North America & 79.568 & 4.188 & 19\\
+Africa & 58.013 & 1.209 & 48\\
+Oceania & 53.202 & 4.092 & 13\\
+South America & 29.416 & 2.674 & 11\\
+\bottomrule
+\end{tabular}
+\caption{2019 CO$_2$ per-capita values by continent (metric tons per capita).}
+\end{table}
+
+Asia has the highest sum (242.026), Europe is second (229.176), North America third (79.568), Africa fourth (58.013), Oceania fifth (53.202) and South America last (29.416). The first is therefore Asia; the third is North America with 79.568; and the last is South America with 29.416 (Fig.~\ref{fig:cont}).
+
+\begin{figure}[H]\centering
+\includegraphics[width=0.48\textwidth]{figures/continents.png}
+\caption{Sum of country-level 2019 CO$_2$ per-capita values by continent.}\label{fig:cont}
+\end{figure}
+
+\section*{4. Discussion, lessons and recommendations}
+The near-zero Pearson correlation shows that population count is not a useful standalone predictor of CO$_2$ emissions per capita in this dataset. A populous country may have low or moderate emissions per person, while a smaller country may have high emissions per person. The join excludes countries whose names differ between the files (for example Russia, Egypt, Iran), and missing CO$_2$ observations reduce the sample. The assignment's request to sum the CO$_2$ variable by continent needs careful interpretation because the variable is measured per capita. For a valid total-emissions comparison, obtain total CO$_2$ emissions and aggregate those values. Future work should harmonize country names (for instance by ISO code), investigate missing data, consider GDP, energy mix and industrialization, and avoid treating the simple 2030 projection as a demographic forecast.
+
+\section*{5. Conclusion}
+The population dataset is complete and supports descriptive analysis and a simple 2030 projection. Asia and Europe have the largest sums of country-level per-capita CO$_2$ values in the matched dataset, while South America has the smallest. Population size and CO$_2$ emissions per capita show virtually no linear relationship in the available matched observations. Results should be interpreted in light of country matching, missing data and the per-capita indicator.
+\end{document}
